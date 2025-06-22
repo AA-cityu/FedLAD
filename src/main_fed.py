@@ -87,6 +87,10 @@ def main(args):
     trainer = FederatedTrainer(config["model_fn"], clients, val_loader, config)
     monitor = TrainingMonitor()
     controller = AdaptiveController(config)
+    os.makedirs("results", exist_ok=True)
+    os.makedirs("results/monitors", exist_ok=True)
+    os.makedirs("results/figures", exist_ok=True)
+    os.makedirs("results/logs", exist_ok=True)
 
     # 11. FL training
     start_time = time.time()
@@ -113,7 +117,7 @@ def main(args):
 
     # 12. Save best model
     if trainer.best_model_state is not None:
-        os.makedirs("checkpoints", exist_ok=True)
+        os.makedirs("results/checkpoints", exist_ok=True)
         torch.save(trainer.best_model_state,
                    f"results/checkpoints/{config['data']['name']}_{model_name}_best_model.pth")
         print(f" Best model saved to checkpoints with F1: {trainer.best_val_f1:.4f}")
@@ -121,11 +125,11 @@ def main(args):
         print("️ No model was saved. Did training finish early or fail to improve?")
 
     # 13. Save logs
-    os.makedirs("results", exist_ok=True)
     monitor.generate_plots()
     monitor.save_to_csv(f"results/monitors/{config['data']['name']}_{model_name}_training_metrics.csv")
 
     # 14. Testing set evaluation
+    os.makedirs("results/performance", exist_ok=True)
     test_dataset = TensorDataset(x_test, y_test)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
