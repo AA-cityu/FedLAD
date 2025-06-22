@@ -1,0 +1,54 @@
+# best_config.yaml
+
+# 设备设置：GPU id（如果只有 CPU 则写 "cpu"）
+device: 0
+
+# 数据部分
+data:
+  name: thunderbird                # 可选 "hdfs"、"bgl"、"thunderbird"
+  distribution: iid          # "iid" 或 "noniid"
+  val_ratio: 0.1
+  test_ratio: 0.2
+
+model:
+  name: loganomaly  # 可选: deeplog / neurallog / onelog / loganomaly
+
+  deeplog:
+    input_size: 768
+    hidden_size: 64
+    dropout: 0.1
+
+  neurallog:
+    embed_dim: 256
+    ff_dim: 512
+    num_heads: 4
+    max_len: 64
+    dropout: 0.1
+
+  onelog:
+    loss_type: logloss
+
+  loganomaly:
+    input_size: 384
+    hidden_size: 64
+
+
+# 训练超参数
+train:
+  batch_size: 64
+  local_epochs: 5
+  lr: 0.001
+  weight_decay: 0.000001
+
+# 联邦学习设置
+federated:
+  num_clients: 10
+  total_rounds: 100
+  aggregation: fedavg      # 初始策略；可为 "fedavg", "scaffold", "fedadam", "fedprox"
+  early_stop_rounds: 10
+  early_stop_delta: 0.0001
+  fedprox:
+    mu: 0.01
+
+output:
+  dir: "results/"
