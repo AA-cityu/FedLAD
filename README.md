@@ -1,6 +1,6 @@
 # FedLAD: A Modular and Adaptive Testbed for Federated Log Anomaly Detection
 
-**FedLAD** is a modular, extensible, and self-adaptive **testbed** for benchmarking log anomaly detection (LAD) models under federated learning (FL) settings. It simulates realistic deployment environments with heterogeneous clients, data privacy constraints, and adaptive training behaviors. Researchers can easily plug in custom models, datasets, and aggregation strategies to evaluate performance, scalability, and robustness.
+**FedLAD** is a modular, extensible, and self-adaptive testbed for benchmarking log anomaly detection (LAD) models under federated learning (FL) settings. It simulates realistic deployment environments with simulated clients, data privacy constraints, and adaptive training behaviors. Researchers can easily plug in custom models, datasets, and aggregation strategies to evaluate performance, scalability, and robustness.
 
 ## Key Features
 
@@ -42,7 +42,7 @@ python src/main_fed.py --config config.py
 
 ### Option 2: Auto-generate configuration
 
-If you prefer not to generate configs manually, you can use our prepared YAML files in the config/ folder:
+If you prefer not to generate configs, you can use our prepared YAML files in the config/ folder:
 
 ```bash
 python src/main_fed.py --config manual_config.py
