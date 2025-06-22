@@ -38,7 +38,7 @@ python auto_config.py --dataset BGL --model deeplog
 
 # Then run training with the generated config
 python src/main_fed.py --config config.py
-
+```
 
 ### Option 2: Auto-generate configuration
 
@@ -46,7 +46,3 @@ If you prefer not to generate configs manually, you can use our prepared YAML fi
 
 ```bash
 python src/main_fed.py --config manual_config.py
-
-
-
-
