@@ -1,17 +1,14 @@
-# best_config.yaml
-
-# 设备设置：GPU id（如果只有 CPU 则写 "cpu"）
 device: 0
 
-# 数据部分
+# data
 data:
-  name: thunderbird                # 可选 "hdfs"、"bgl"、"thunderbird"
-  distribution: iid          # "iid" 或 "noniid"
+  name: thunderbird          # "hdfs, "bgl", "thunderbird"
+  distribution: iid          # "iid" or "noniid"
   val_ratio: 0.1
   test_ratio: 0.2
 
 model:
-  name: loganomaly  # 可选: deeplog / neurallog / onelog / loganomaly
+  name: loganomaly  # deeplog / neurallog / loganomaly
 
   deeplog:
     input_size: 768
@@ -44,7 +41,7 @@ train:
 federated:
   num_clients: 10
   total_rounds: 100
-  aggregation: fedavg      # 初始策略；可为 "fedavg", "scaffold", "fedadam", "fedprox"
+  aggregation: fedavg      # Initial strategy, "fedavg", "scaffold", "fedadam", "fedprox"
   early_stop_rounds: 10
   early_stop_delta: 0.0001
   fedprox:
