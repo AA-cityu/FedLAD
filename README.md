@@ -26,6 +26,14 @@ Users can also easily register and integrate **any custom LAD model** by followi
 
 Users can also register and preprocess **custom datasets** using the parser registry framework.
 
+## Installation
+
+To install dependencies, run:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Quick Start
 
 ### Option 1: Auto-generate configuration
