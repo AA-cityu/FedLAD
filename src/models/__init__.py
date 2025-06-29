@@ -3,7 +3,6 @@
 from .deeplog import DeepLog
 from .loganomaly import LogAnomaly
 from .neurallog import NeuralLog
-from .onelog import OneLog
 
 def get_model(name):
     name = name.lower()
