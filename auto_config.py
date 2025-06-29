@@ -18,12 +18,12 @@ def analyze_dataset(dataset: str, device: str, log_path: str = None, label_path:
     # If the user does not provide a path, then use the default path.
     if log_path is None:
         if dataset.lower() == "hdfs":
-            log_path = 'dataset/HDFS10k.log'
-            label_path = 'dataset/HDFS10k_label.csv'
+            log_path = 'dataset/HDFS/HDFS10k.log'
+            label_path = 'dataset/HDFS/HDFS10k_label.csv'
         elif dataset.lower() == "bgl":
-            log_path = 'dataset/BGL10k.log'
+            log_path = 'dataset/BGL/BGL10k.log'
         elif dataset.lower() == 'thunderbird':
-            log_path = 'dataset/Thunderbird10k.log'
+            log_path = 'dataset/Thunderbird/Thunderbird10k.log'
 
     # Uniformly call the parser_fn, depending on whether label_path processing is required.
     if dataset.lower() == "hdfs":
