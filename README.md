@@ -26,11 +26,24 @@ Users can also easily register and integrate **any custom LAD model** by followi
 
 Users can also register and preprocess **custom datasets** using the parser registry framework.
 
-## Installation
+## Environment Setup
 
-To install dependencies, run:
+We recommend using the following environment for best compatibility and performance:
+
+  - Python version: **3.9**
+  - PyTorch version: **1.13.1+cu117** (CUDA 11.7)
+
+You can create a clean virtual environment and install the required packages as follows:
 
 ```bash
+# Step 1: Create and activate a virtual environment (using conda)
+conda create -n fedlad python=3.9 -y
+conda activate fedlad
+
+# Step 2: Install PyTorch 1.13.0 with CUDA 11.7
+pip install torch==1.13.0+cu117 torchvision==0.14.0+cu117 torchaudio==0.13.0 --extra-index-url https://download.pytorch.org/whl/cu117
+
+# Step 3: Install other dependencies
 pip install -r requirements.txt
 ```
 
@@ -42,15 +55,15 @@ Use `auto_config.py` to generate a config file based on your chosen dataset and 
 
 ```bash
 # Example: generate config for BGL + DeepLog
-python auto_config.py --dataset BGL --model deeplog
+python auto_config.py --dataset bgl --model deeplog
 
 # Then run training with the generated config
-python src/main_fed.py --config config.py
+python src/main_fed.py --config config.yaml
 ```
 
 ### Option 2: Auto-generate configuration
 
-If you prefer not to generate configs, you can use our prepared YAML files in the config/ folder:
+If you prefer not to generate configs, you can use our prepared YAML files:
 
 ```bash
-python src/main_fed.py --config manual_config.py
+python src/main_fed.py --config manual_config.yaml
