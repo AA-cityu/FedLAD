@@ -90,21 +90,25 @@ python src/main_fed.py --config manual_config.yaml
 This section describes how to extend FedLAD with custom models, datasets, and strategies.
 
 ### 1. Add a New LAD Model
-1. Implement your model class in `models/your_model.py`
-2. Ensure it inherits from `nn.Module` and implements `forward()`
-3. Register the model in `model_registry.py`:
+1. Create a new Python file (e.g., `your_model.py`) inside the `models/` directory. Define your model as a subclass of `torch.nn.Module` and implement a standard `forward()` method.
    
+2. Open `models/__init__.py` and add an import and a new elif clause to the `get_model()` function:
+
 ```python
-from models.your_model import YourModel
-model_registry["your_model"] = YourModel
+elif name == "your_model":
+        return YourModel
+```
+
+3. Use the model in configuration:
+```python
+model:
+  name: your_model
 ```
 
 ### 2. Add a New Dataset
 1. Register a parser by adding your custom parser to `parser_registry.py` and register it like so:
 
 ```python
-from parser_registry import register_parser
-
 @register_parser("your_dataset_name")
 def parse_your_dataset():
     ...
@@ -114,13 +118,10 @@ def parse_your_dataset():
 2. Once registered, your parser can be retrieved and used by name:
 
 ```python
-from parser_registry import get_parser
-
 parser = get_parser("your_dataset_name")
 ```
 
-3. Use Your Dataset
-Once registered, the dataset can be used by name in your configuration file:
+3. Use the dataset in configuration:
 
 ```python
 dataset:
