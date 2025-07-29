@@ -30,14 +30,14 @@ model:
     hidden_size: 64
 
 
-# 训练超参数
+# hyperparameter of training
 train:
   batch_size: 64
   local_epochs: 5
   lr: 0.001
   weight_decay: 0.000001
 
-# 联邦学习设置
+# FL settings
 federated:
   num_clients: 10
   total_rounds: 100
