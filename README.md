@@ -83,3 +83,46 @@ If you prefer not to generate configs, you can use our prepared YAML files:
 
 ```bash
 python src/main_fed.py --config manual_config.yaml
+```
+
+## Extension Guide
+
+This section describes how to extend FedLAD with custom models, datasets, and strategies.
+
+### 1. Add a New LAD Model
+1. Implement your model class in `models/your_model.py`
+2. Ensure it inherits from `nn.Module` and implements `forward()`
+3. Register the model in `model_registry.py`:
+   
+```python
+from models.your_model import YourModel
+model_registry["your_model"] = YourModel
+```
+
+### 2. Add a New Dataset
+1. Register a parser by adding your custom parser to `parser_registry.py` and register it like so:
+
+```python
+from parser_registry import register_parser
+
+@register_parser("your_dataset_name")
+def parse_your_dataset():
+    ...
+    return log_vectors, labels
+```
+
+2. Once registered, your parser can be retrieved and used by name:
+
+```python
+from parser_registry import get_parser
+
+parser = get_parser("your_dataset_name")
+```
+
+3. Use Your Dataset
+Once registered, the dataset can be used by name in your configuration file:
+
+```python
+dataset:
+  name: your_dataset_name
+```
