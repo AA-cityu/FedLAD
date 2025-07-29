@@ -23,7 +23,6 @@ class TrainingMonitor:
         os.makedirs(log_dir, exist_ok=True)
         os.makedirs(plot_dir, exist_ok=True)
 
-        # 保存每轮的指标
         self.metrics = {
             "round": [],
             "train_loss": [],
@@ -86,7 +85,7 @@ class TrainingMonitor:
     def save_to_csv(self, csv_path):
         df = pd.DataFrame(self.metrics)
         df.to_csv(csv_path, index=False)
-        print(f"[✔] Metrics saved to CSV: {csv_path}")
+        print(f"Metrics saved to CSV: {csv_path}")
 
     def detect_convergence_or_instability(self, window=5, threshold=0.01):
         """
@@ -100,10 +99,10 @@ class TrainingMonitor:
             diffs = np.diff(recent_losses)
             mean_change = np.mean(np.abs(diffs))
 
-            # 收敛判断
+            # convergence
             if mean_change < threshold:
                 status = f"Converged: avg loss change {mean_change:.4f} < {threshold}"
-            # 震荡判断
+            # oscillation
             elif np.sum(np.sign(diffs)[:-1] != np.sign(diffs)[1:]) >= window - 1:
                 status = f"Oscillation detected in last {window} rounds"
             else:
