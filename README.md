@@ -26,14 +26,29 @@ Users can also easily register and integrate **any custom LAD model** by followi
 
 Users can also register and preprocess **custom datasets** using the parser registry framework.
 
+## System Requirements
+
+FedLAD has been tested on a workstation with 4× NVIDIA GeForce RTX 3090 (24GB each) using CUDA 11.4. The following environment settings are recommended:
+
+- **Operating System**:
+  - Ubuntu 20.04 or later (Linux recommended)
+  - MacOS and Windows are not officially supported
+
+- **Python Version**:  
+  - Python 3.9 or 3.10 (both tested)
+
+- **Hardware Requirements**:
+  - CPU: ≥ 4 cores (8 recommended for simulating multiple clients)
+  - RAM: ≥ 8 GB (≥ 16 GB recommended for large models)
+  - GPU: NVIDIA GPU with CUDA ≥ 11.0 and ≥ 8 GB VRAM
+
+- **Disk Space**:  
+  - ≥ 5 GB (for datasets, checkpoints, logs)
+
+
 ## Environment Setup
 
-We recommend using the following environment for best compatibility and performance:
-
-  - Python version: **3.9**
-  - PyTorch version: **1.13.1+cu117** (CUDA 11.7)
-
-You can create a clean virtual environment and install the required packages as follows:
+We recommend using Conda to manage environments for the best compatibility.
 
 ```bash
 # Step 1: Create and activate a virtual environment (using conda)
@@ -44,6 +59,7 @@ conda activate fedlad
 pip install torch==1.13.0+cu117 torchvision==0.14.0+cu117 torchaudio==0.13.0 --extra-index-url https://download.pytorch.org/whl/cu117
 
 # Step 3: Install other dependencies
+cd FedLAD
 pip install -r requirement.txt
 ```
 
