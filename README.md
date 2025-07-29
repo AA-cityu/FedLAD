@@ -70,8 +70,8 @@ pip install -r requirement.txt
 Use `auto_config.py` to generate a config file based on your chosen dataset and model. This tool will recommend reasonable defaults and reduce setup complexity.
 
 ```bash
-# Example: generate config for BGL + DeepLog
-python auto_config.py --dataset bgl --model deeplog
+# Example: generate config for BGL + LogAnomaly
+python auto_config.py --dataset bgl --model loganomaly
 
 # Then run training with the generated config
 python src/main_fed.py --config config.yaml
