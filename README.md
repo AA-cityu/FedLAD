@@ -107,7 +107,6 @@ model:
 
 ### 2. Add a New Dataset
 1. Register a parser by adding your custom parser to `parser_registry.py` and register it like so:
-
 ```python
 @register_parser("your_dataset_name")
 def parse_your_dataset():
@@ -116,14 +115,30 @@ def parse_your_dataset():
 ```
 
 2. Once registered, your parser can be retrieved and used by name:
-
 ```python
 parser = get_parser("your_dataset_name")
 ```
 
 3. Use the dataset in configuration:
-
 ```python
 dataset:
   name: your_dataset_name
 ```
+
+### 3. Add a New FL Strategy
+1. Open `federated/strategies.py` and define your new strategy
+2. Open `federated/trainer.py` and update the `strategy_map` inside the constructor to include your new strategy:
+```python
+self.strategy_map = {
+    ...
+    "your_strategy": YourStrategy()  
+}
+```
+
+3. Use it in the configuration:
+```python
+federated:
+  aggregation: your_strategy
+```
+
+4. If you want your strategy to participate in automatic switching, open `adaptation/controller.py` and update the `adapt_strategy()` function to define switching logic for your strategy.
