@@ -49,7 +49,7 @@ FedLAD has been tested on a workstation with 4× NVIDIA GeForce RTX 3090 (24GB e
 ## Environment Setup
 
 We recommend using Conda to manage environments for the best compatibility.
-Please install Anaconda first if it is not installed. Download from [Anaconda Downloads](https://www.anaconda.com/) and follow the installation instructions for your OS.
+Please install Anaconda first if it is not installed. Download from [Anaconda](https://www.anaconda.com/) and follow the installation instructions for your OS.
 
 ```bash
 # Step 1: Create and activate a virtual environment (using conda)
