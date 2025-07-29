@@ -9,11 +9,11 @@ class LogAnomaly(nn.Module):
         self.num_layers = num_layers
         self.sequence_length = seq_len
 
-        # 双路 LSTM
+        # LSTM
         self.lstm0 = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
         self.lstm1 = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
 
-        # Attention 参数
+        # Attention
         self.attention_size = hidden_size
         self.w_omega = nn.Parameter(torch.zeros(hidden_size, hidden_size))
         self.u_omega = nn.Parameter(torch.zeros(hidden_size))
@@ -26,14 +26,14 @@ class LogAnomaly(nn.Module):
         output_reshape = lstm_output.contiguous().view(-1, self.hidden_size)  # (batch*seq_len, hidden)
         attn_tanh = torch.tanh(torch.matmul(output_reshape, self.w_omega))  # (batch*seq_len, hidden)
         attn_scores = torch.matmul(attn_tanh, self.u_omega)  # (batch*seq_len,)
-        attn_scores = attn_scores.view(batch_size, seq_len)  # ✅ 动态 reshape
+        attn_scores = attn_scores.view(batch_size, seq_len)  # reshape
         attn_weights = F.softmax(attn_scores, dim=1).unsqueeze(-1)  # (batch, seq_len, 1)
         attn_output = torch.sum(lstm_output * attn_weights, dim=1)  # (batch, hidden)
         return attn_output
 
     def forward(self, features):
-        # 输入: features [batch, seq_len, input_size*2]
-        input0, input1 = torch.chunk(features, 2, dim=-1)  # 各 [batch, seq_len, input_size]
+        # input: features [batch, seq_len, input_size*2]
+        input0, input1 = torch.chunk(features, 2, dim=-1)  #  [batch, seq_len, input_size]
 
         out0, _ = self.lstm0(input0)  # [batch, seq_len, hidden]
         out1, _ = self.lstm1(input1)  # [batch, seq_len, hidden]
