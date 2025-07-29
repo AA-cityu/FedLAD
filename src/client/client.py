@@ -18,38 +18,47 @@ class Client:
     def set_weights(self, weights):
         self.model.load_state_dict(copy.deepcopy(weights))
 
-    def train(self, strategy, global_weights=None):
-        self.model.train()
-        optimizer = torch.optim.Adam(
-            self.model.parameters(), lr=self.config["train"]["lr"], weight_decay=self.config["train"]["weight_decay"])
-        mu = self.config["train"].get("fedprox_mu", 0.01)
-
-        epochs = self.config["train"]["local_epochs"]
-        device = self.config["device"]
-
-        # Dynamically obtain the category weights of the current client
+    def _compute_class_weights(self):
         all_labels_flat = [label for _, y in self.train_loader for label in y.numpy()]
-        # Ensure the length of weight is 2
         label_counter = Counter(all_labels_flat)
         total = sum(label_counter.values())
-
         class_weights = []
         for cls in [0, 1]:
             count = label_counter.get(cls, 0)
-            if count == 0:
-                weight = 0.0
-            else:
-                weight = total / (count + 1e-6)
+            weight = total / (count + 1e-6) if count > 0 else 0.0
             class_weights.append(weight)
+        class_weights = torch.tensor(class_weights, dtype=torch.float32).to(self.config["device"])
+        return class_weights / class_weights.sum()
 
-        class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
-        class_weights = class_weights / class_weights.sum()  # 归一化，不影响 loss scale
+    def _apply_fedprox(self, loss, global_weights, mu):
+        prox_reg = 0.0
+        for name, param in self.model.named_parameters():
+            prox_reg += ((param - global_weights[name].to(self.config["device"])) ** 2).sum()
+        return loss + (mu / 2) * prox_reg
 
-        criterion = torch.nn.CrossEntropyLoss(weight=class_weights)
+    def _apply_scaffold_gradients(self):
+        for name, param in self.model.named_parameters():
+            if name in self.control:
+                param.grad += self.control[name]
 
-        # Scaffold controls variable initialization
+    def _initialize_control(self):
+        self.control = {k: torch.zeros_like(v).to(self.config["device"]) for k, v in self.model.state_dict().items()}
+
+    def train(self, strategy, global_weights=None):
+        self.model.train()
+        device = self.config["device"]
+        epochs = self.config["train"]["local_epochs"]
+        mu = self.config["train"].get("fedprox_mu", 0.01)
+        optimizer = torch.optim.Adam(
+            self.model.parameters(),
+            lr=self.config["train"]["lr"],
+            weight_decay=self.config["train"]["weight_decay"]
+        )
+
         if strategy == "scaffold" and self.control is None:
-            self.control = {k: torch.zeros_like(v).to(device) for k, v in self.model.state_dict().items()}
+            self._initialize_control()
+
+        criterion = torch.nn.CrossEntropyLoss(weight=self._compute_class_weights())
 
         total_loss, correct, total = 0.0, 0, 0
         all_preds, all_labels = [], []
@@ -57,26 +66,17 @@ class Client:
         for _ in range(epochs):
             for x_batch, y_batch in self.train_loader:
                 x_batch, y_batch = x_batch.to(device), y_batch.to(device)
-
                 optimizer.zero_grad()
                 output = self.model(x_batch)
                 loss = criterion(output, y_batch)
 
-                # FedProx regularization
                 if strategy == "fedprox" and global_weights is not None:
-                    prox_reg = 0.0
-                    for name, param in self.model.named_parameters():
-                        prox_reg += ((param - global_weights[name].to(device)) ** 2).sum()
-                    loss += (mu / 2) * prox_reg
+                    loss = self._apply_fedprox(loss, global_weights, mu)
 
                 loss.backward()
 
-                # Scaffold controls the gradient update
                 if strategy == "scaffold":
-                    with torch.no_grad():
-                        for name, param in self.model.named_parameters():
-                            if name in self.control:
-                                param.grad += self.control[name]
+                    self._apply_scaffold_gradients()
 
                 optimizer.step()
 
@@ -84,9 +84,8 @@ class Client:
                 preds = torch.argmax(output, dim=1)
                 correct += (preds == y_batch).sum().item()
                 total += y_batch.size(0)
-
-                all_preds.extend(preds.detach().cpu().numpy())
-                all_labels.extend(y_batch.detach().cpu().numpy())
+                all_preds.extend(preds.cpu().numpy())
+                all_labels.extend(y_batch.cpu().numpy())
 
         self.last_loss = total_loss / total
         self.last_acc = correct / total
